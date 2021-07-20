@@ -74,7 +74,7 @@ def get_data(n: int):
     Removes any non-zero values outside of the designated retinal image using the provided masks
 
     @parameters
-        images (torch.Tensor)   - training images
+        images (torch.Tensor)   - dataset images
         masks (torch.Tensor)    - respective masks to define where the retinal image is
 """
 def remove_mask(images, masks):

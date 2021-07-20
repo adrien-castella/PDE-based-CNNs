@@ -236,6 +236,7 @@ class DilationR2(nn.Module):
         
         return -inf_convolution_2d(-x, kernel)
     
+    # not used by the network. Used for plotting output separately
     def get_kernel(self, metric, t: float = 1):
         kernel = get_value(
             get_norm(self.y, metric),
@@ -282,6 +283,7 @@ class ErosionR2(nn.Module):
         
         return inf_convolution_2d(x, kernel)
     
+    # not used by the network. Used for plotting output separately
     def get_kernel(self, metric, t: float = 1):
         kernel = get_value(
             get_norm(self.y, metric),
@@ -361,6 +363,7 @@ class DiffusionR2(nn.Module):
         # regular convolution instead. Use torch.nn.Conv2d
         return convolution_2d(x, kernel)
 
+    # not used by the network. Used for plotting output separately
     def get_kernel(self, metric, t: float = 1):
         kernel = get_scale(
             torch.pow(get_norm(self.y, metric), 2),
