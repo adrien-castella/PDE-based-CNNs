@@ -1,3 +1,4 @@
+# modules needed for the PDE-based CNN
 from modules import ConvectionR2, DilationR2, LinearR2, ErosionR2, DiffusionR2
 import torch.nn as nn
 
@@ -11,16 +12,27 @@ class CDEPdeCNN(nn.Module):
     Optionally you could also develop a module that handles diffusion on R2.
     """
 
+    """
+        Initializing the layers
+
+        @parameters
+            self
+            conf (dict) - dictionary for the configuration to be used
+    """
     def __init__(self, conf: dict):
         super().__init__()
 
+        # Extracting configuration details from dictionary
         c = conf['channels']  # internal channels
-        layers = conf['layers']
+        # layers = conf['layers'] <-- does NOT work
         components = conf['components']
         channels = conf['channels']
         size = conf['size']
         alpha = conf['alpha']
         
+
+        # Adding respective modules to each layer
+
         list_of = []
         if components[0]:
             list_of.append(ConvectionR2(channels=3))
@@ -53,8 +65,8 @@ class CDEPdeCNN(nn.Module):
         list_of = []
         if components[0]:
             list_of.append(ConvectionR2(channels=c))
-        # if components[3]:
-        #     list_of.append(DiffusionR2(channels=c, kernel_size=size, alpha=alpha))
+        if components[3]:
+            list_of.append(DiffusionR2(channels=c, kernel_size=size, alpha=alpha))
         if components[1]:
             list_of.append(DilationR2(channels=c, kernel_size=5, alpha=0.65))
         if components[2]:
@@ -68,8 +80,8 @@ class CDEPdeCNN(nn.Module):
         list_of = []
         if components[0]:
             list_of.append(ConvectionR2(channels=c))
-        # if components[3]:
-        #     list_of.append(DiffusionR2(channels=c, kernel_size=size, alpha=alpha))
+        if components[3]:
+            list_of.append(DiffusionR2(channels=c, kernel_size=size, alpha=alpha))
         if components[1]:
             list_of.append(DilationR2(channels=c, kernel_size=5, alpha=0.65))
         if components[2]:
@@ -82,8 +94,8 @@ class CDEPdeCNN(nn.Module):
         list_of = []
         if components[0]:
             list_of.append(ConvectionR2(channels=c))
-        # if components[3]:
-        #     list_of.append(DiffusionR2(channels=c, kernel_size=size, alpha=alpha))
+        if components[3]:
+            list_of.append(DiffusionR2(channels=c, kernel_size=size, alpha=alpha))
         if components[1]:
             list_of.append(DilationR2(channels=c, kernel_size=5, alpha=0.65))
         if components[2]:
@@ -103,7 +115,7 @@ class CDEPdeCNN(nn.Module):
             self.list_layers.append(list_layers[i])
         self.list_layers.append(self.layer6)
         
-
+    # Running the network
     def forward(self, x):
         for i in self.list_layers:
             x = i(x)

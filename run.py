@@ -7,11 +7,11 @@ import numpy as np
     prints the progress bar at 100% to indicate that the simulation is finished
     
     @parameters
-        acc (float)     -
-        auc (float)     -
-        dice (float)    -
-        fill (str)      -
-        length (int)    -
+        acc (float)     - the best accuracy metric score. Takes values in the range [0,1]
+        auc (float)     - the best AUC metric score. Takes values in the range [0,1]
+        dice (float)    - the best DICE metric score. Takes values in the range [0,1]
+        fill (str)      - the character used to fill the progress bar
+        length (int)    - the length of the total progress bar
 """
 def finalBar(acc, auc, dice, fill='█', length=20):
     output = 'Progress: |' + length * fill + '| 100% Complete.\t\t\t\t\t\t\t\n'
@@ -46,20 +46,20 @@ def run_model(device, MODEL, train_loader, test_loader, PATH, conf: dict, j: int
     TEST_AUC_LIST = []
     TRAIN_LOSS_LIST = []
     TEST_LOSS_LIST = []
-    CONV_VECTORS = []
     TEST_TIME = []
     TRAIN_TIME = []
 
+    # Creater folder for model output
     modelpath = os.path.join(PATH, conf["name"])
     if not os.path.exists(modelpath):
         os.makedirs(modelpath)
     
-    # instanciate model
-    
+    # Instance of the model
     model = MODEL(conf).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, LR_GAMMA)
     
+    # Model details
     total_params = sum(p.numel() for p in model.parameters(recurse=True))
     
     print(
@@ -67,7 +67,8 @@ def run_model(device, MODEL, train_loader, test_loader, PATH, conf: dict, j: int
         + f"{MODEL.__name__}"
         + f" with {total_params} parameters"
     )
-    
+
+    # Running each epoch
     print(f"Conf: {j+1}/{tot}")
     for epoch in range(EPOCHS):
         loss_v, train_t = train(model, device, train_loader, optimizer, 
@@ -85,6 +86,7 @@ def run_model(device, MODEL, train_loader, test_loader, PATH, conf: dict, j: int
         torch.save(model, os.path.join(modelpath, num+'_'+NAME+'.pt'))
         scheduler.step()
 
+    # Getting simulation statistics
     val_dice = max(TEST_DICE_LIST)
     ind_dice = TEST_DICE_LIST.index(val_dice)
     val_acc = max(TEST_ACC_LIST)
@@ -92,9 +94,9 @@ def run_model(device, MODEL, train_loader, test_loader, PATH, conf: dict, j: int
     val_auc = max(TEST_AUC_LIST)
     ind_auc = TEST_AUC_LIST.index(val_auc)
 
-    # remove in case of one configuration
     finalBar(val_acc, val_auc, val_dice)
 
+    # Storing statistics in output files
     newpath = os.path.join(PATH, 'JSON files')
     with open(os.path.join(newpath, conf["name"]+"_details"), 'w') as file:
         file.write(f"Number of images: {im}\n")
@@ -118,18 +120,19 @@ def run_model(device, MODEL, train_loader, test_loader, PATH, conf: dict, j: int
     with open(os.path.join(newpath, conf["name"]+'_train'), 'w') as file:
         json.dump(TRAIN_TIME, file)
 
+    # Plotting loss and test scores for each metric
     plot_loss(TRAIN_LOSS_LIST, TEST_LOSS_LIST, EPOCHS, conf, PATH)
     plot_test(TEST_DICE_LIST, TEST_ACC_LIST, TEST_AUC_LIST, EPOCHS, conf, PATH)
 
 """
-    plots the loss as a function of the epochs
+    plots the loss of the train and the test data as a function of the epochs
     
     @parameters
-        train (list)    - 
-        loss (list)     - 
-        epoch (int)     - 
-        conf (dict)     - 
-        PATH (str)      - 
+        train (list)    - list of training loss scores (float) at each epoch
+        loss (list)     - list of testing loss scores (float) at each epoch
+        epoch (int)     - number of epochs in the simulation
+        conf (dict)     - configuration dictionary, used for the title
+        PATH (str)      - folder location to store the output
 """
 def plot_loss(train: list, loss: list, epoch: int, conf: dict, PATH):
     fig, ax = plt.subplots()
@@ -146,12 +149,12 @@ def plot_loss(train: list, loss: list, epoch: int, conf: dict, PATH):
     plots the test score against the epochs for each metric
     
     @parameters
-        t_1 (list)      - 
-        t_2 (list)      - 
-        t_3 (list)      - 
-        epoch (int)     - 
-        conf (dict)     - 
-        PATH (str)      - 
+        t_1 (list)      - list of DICE scores (float) at each epoch
+        t_2 (list)      - list of accuracy scores (float) at each epoch
+        t_3 (list)      - list of AUC scores (float) at each epoch
+        epoch (int)     - number of epochs
+        conf (dict)     - configuration dictionary, used for the title
+        PATH (str)      - folder location to store the output
 """
 def plot_test(t_1: list, t_2: list, t_3: list, epoch: int, conf: dict, PATH):
     fig, ax = plt.subplots()

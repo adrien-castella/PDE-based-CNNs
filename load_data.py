@@ -5,11 +5,19 @@ import random
 import matplotlib.pyplot as plt
 from torchvision.transforms import RandomRotation as Rotate
 
+# Use available devices
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = torch.device('cpu')
 
+"""
+    Physically loads the data sets (training input/labels, testing input/labels, and masks)
+    
+    @parameters
+        n (int) - if n < number of training images, it reduces the training data to n random data points
+    @returns tuple of torch.Tensors for each component of the data
+"""
 def get_data(n: int):
     train_dir = 'input/drive-full/DRIVE/training'
     test_dir = 'input/drive-full/DRIVE/test'
@@ -62,6 +70,13 @@ def get_data(n: int):
 
     return train_img, train_lbl, test_img, test_lbl, test_mask, train_mask
 
+"""
+    Removes any non-zero values outside of the designated retinal image using the provided masks
+
+    @parameters
+        images (torch.Tensor)   - training images
+        masks (torch.Tensor)    - respective masks to define where the retinal image is
+"""
 def remove_mask(images, masks):
     images = images.transpose(0,1)
     masks = masks.unsqueeze(0)
@@ -70,6 +85,15 @@ def remove_mask(images, masks):
     images[masks == 0] = 0
     images = images.transpose(0,1)
 
+"""
+    Cuts the training images into smaller patches of dimension sizeXsize
+
+    @parameters
+        x (torch.Tensor)    - original training images
+        size (int)          - dimensions of the resulting patches
+        stride (int)        - the stride, or step after each cut
+    @returns torch.Tensor containing the cut training dataset
+"""
 def cut_into_patches(x:torch.Tensor, size=64, stride=48) -> torch.Tensor:
         
     C, x = (x.size(1), x) if len(x.shape) == 4 else (0, x.unsqueeze(1))
@@ -84,7 +108,16 @@ def cut_into_patches(x:torch.Tensor, size=64, stride=48) -> torch.Tensor:
     
     return x.contiguous()
 
-def finish_loading(m: int, n: int, d):
+"""
+    Runs the data loading process
+
+    @parameters
+        m (int)             - number of rotated training points to add per image
+        n (int)             - size of the original training set (\leq 20)
+        d (torch.device)    - the device used for loading the data
+    @returns tuple of TensorDataset for training and testing data
+"""
+def finish_loading(m: int, n: int, d = device):
     device = d
     train_img, train_lbl, test_img, test_lbl, test_mask, train_mask = get_data(n)
 

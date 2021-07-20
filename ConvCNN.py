@@ -8,15 +8,24 @@ class ConventionalCNN(nn.Module):
     The network outputs a tensor of shape [B,1,H,W] with values in the interval [0,1] to indicate background/vessel classification.
     """
 
+    """
+        Initializing the layers
+
+        @parameters
+            self
+            conf (dict) - dictionary for the configuration to be used
+    """
     def __init__(self, conf: dict):
         super().__init__()
 
+        # Extracting configuration details from dictionary
         track = False
         c = conf['channels']
-        layers = conf['layers']
+        # layers = conf['layers'] <-- does NOT work
         c_final = 16
-        
-        self.layers = layers
+
+
+        # Adding respective modules to each layer
 
         self.conv1 = nn.Sequential(
             nn.ReplicationPad2d(3),
@@ -63,6 +72,7 @@ class ConventionalCNN(nn.Module):
         self.list_layers = [self.conv1, self.conv2, self.conv3,
                             self.conv4, self.conv5, self.conv6]
 
+    # Running the network
     def forward(self, x):
         for i in self.list_layers:
             x = i(x)
