@@ -4,7 +4,7 @@ from skimage.util import random_noise
 import matplotlib.pyplot as plt
 from run import run_model
 
-# Listing parameters
+# Getting input parameters
 ap = argparse.ArgumentParser()
 req = ap.add_argument_group('required arguments')
 req.add_argument(
@@ -38,7 +38,7 @@ ap.add_argument(
 args = vars(ap.parse_args())
 
 
-# Checking for availability of device
+# Checking for availability of the chosen device
 if torch.cuda.is_available() and args['device'] == 'GPU':
     device = torch.device('cuda')
     print('Using CUDA')
@@ -72,6 +72,7 @@ from CDEPdeCNNge import CDEPdeCNN as GEN
 from CDEPdeCNNed import CDEPdeCNN as DE
 from ConvCNN import ConventionalCNN as CON
 
+# creating necessary folders
 PATH = 'output'
 NAME = args['folder']
 BATCH_SIZE = 12
@@ -96,15 +97,17 @@ train_loader = torch.utils.data.DataLoader(
 )
 test_loader = torch.utils.data.DataLoader(test_set, batch_size=1, shuffle=False)
 
-# Adding noise to images
+# Adding noise to images (can be improved)
 if bool(args['noise']):
     for data in train_loader:
+        # change THIS code. "img" contain a current image. Add noise and store again in data[0]
         img, _ = data[0].cpu(), data[1]
         img = torch.Tensor(random_noise(img, mode='speckle', mean=0, var=0.01, clip=True))
         img = torch.Tensor(random_noise(img, mode='gaussian', mean=0, var=0.01, clip=True))
         data[0] = img.to(device)
 
     for data in test_loader:
+        #change THIS code. Same as before
         img, _ = data[0].cpu(), data[1]
         img = torch.Tensor(random_noise(img, mode='speckle', mean=0, var=0.01, clip=True))
         img = torch.Tensor(random_noise(img, mode='gaussian', mean=0, var=0.01, clip=True))

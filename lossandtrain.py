@@ -3,6 +3,21 @@ import time, math
 import torch
 import numpy as np
 
+"""
+    Prints a command line progress bar.
+    
+    @parameters
+        batch (int)     - how many batches have been processed
+        epoch (int)     - how many epochs have been trained
+        batches (int)   - the total number of batches that will be used
+        epochs (int)    - the total number of epochs that will be trained
+        name (str)      - name of the "batch" (or "test") counter
+        fill (str)      - character that fills the progress bar
+        l_1 (int)       - length of the "batch" (or "test") progress bar
+        l_2 (int)       - length of the epoch progress barx
+
+    WARNING: avoid printing other things in the command line during use. Errors will definitely occur.
+"""
 def progressBar(batch, epoch, batches=202, epochs=75, name='Batch', fill='█', l_1=20, l_2=10):
     output = 'Progress: '
     b_1 = '|' + int(epoch * l_1 / epochs) * fill + '-'*(l_1 - int(epoch * l_1 / epochs)) + '| '
@@ -50,6 +65,7 @@ def loss(model, device, output, y, total_params: int, L2: float, config: dict):
 
     l2_loss = l2_loss / total_params
 
+    # computes the Diffusion coefficient if a norm is used
     if not ((not 'loss' in config) or config['loss'] == 0):
         for n, p in model.named_parameters():
             if "diff_metric" in n:

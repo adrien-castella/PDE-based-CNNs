@@ -1,5 +1,6 @@
 import os, json, argparse
 
+# Getting input parameters
 ap = argparse.ArgumentParser()
 req = ap.add_argument_group('required arguments')
 ap.add_argument(
@@ -8,6 +9,7 @@ ap.add_argument(
 )
 args = vars(ap.parse_args())
 
+# List available configuration file or print the chosen one
 if args['name'] == None:
     print(json.dumps(os.listdir(os.path.join('input', 'configurations')), indent=2))
 else:
