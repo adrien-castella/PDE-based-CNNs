@@ -3,7 +3,12 @@ import torch.nn as nn
 import os, glob
 import random
 import matplotlib.pyplot as plt
+from libtiff import TIFF
 from torchvision.transforms import RandomRotation as Rotate
+
+def imread(path):
+    file = TIFF.open(path, mode='r')
+    return file.read_image()
 
 # Use available devices
 if torch.cuda.is_available():
@@ -25,7 +30,7 @@ def get_data(n: int):
     print(f'Loading the data... {0}/{6}', end='\r')
 
     train_img_filenames = sorted([filename for filename in glob.glob(os.path.join(train_dir, 'images', '*.tif'))])
-    train_img = torch.Tensor([plt.imread(filename) for filename in train_img_filenames]).transpose(1,3).transpose(-1,-2).to(device) / 255.0
+    train_img = torch.Tensor([imread(filename) for filename in train_img_filenames]).transpose(1,3).transpose(-1,-2).to(device) / 255.0
 
     print(f'Loading the data... {1}/{6}', end='\r')
 
@@ -35,7 +40,7 @@ def get_data(n: int):
     print(f'Loading the data... {2}/{6}', end='\r')
 
     test_img_filenames = sorted([filename for filename in glob.glob(os.path.join(test_dir, 'images', '*.tif'))])
-    test_img = torch.Tensor([plt.imread(filename) for filename in test_img_filenames]).transpose(1,3).transpose(-1,-2).to(device) / 255.0
+    test_img = torch.Tensor([imread(filename) for filename in test_img_filenames]).transpose(1,3).transpose(-1,-2).to(device) / 255.0
 
     print(f'Loading the data... {3}/{6}', end='\r')
 

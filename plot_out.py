@@ -3,6 +3,10 @@ import torch, os, glob, json, random, argparse
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def imread(path):
+    file = TIFF.open(path, mode='r')
+    return file.read_image()
+
 """
     plots an RGB image given by data
 
@@ -170,7 +174,7 @@ def load_data(i):
     test_dir = 'input/drive-full/DRIVE/test'
 
     test_img_filenames = sorted([filename for filename in glob.glob(os.path.join(test_dir, 'images', '*.tif'))])
-    test_img = torch.Tensor([plt.imread(test_img_filenames[i])]).transpose(1,3).transpose(-1,-2).to(device) / 255.0
+    test_img = torch.Tensor([imread(test_img_filenames[i])]).transpose(1,3).transpose(-1,-2).to(device) / 255.0
 
     test_lbl_filenames = sorted([filename for filename in glob.glob(os.path.join(test_dir, '1st_manual', '*.gif'))])
     test_lbl = torch.Tensor([plt.imread(test_lbl_filenames[i])]).to(device) / 255.0
