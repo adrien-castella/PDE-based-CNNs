@@ -24,7 +24,7 @@ class CDEPdeCNN(nn.Module):
 
         # Extracting configuration details from dictionary
         c = conf['channels']  # internal channels
-        # layers = conf['layers'] <-- does NOT work
+        layers = 5 # <-- does NOT work
         components = conf['components']
         channels = conf['channels']
         size = conf['size']

@@ -134,7 +134,7 @@ def test(model, device, test_loader, total_params: int, L2: float, epoch: int, c
 
             output = model(x)
 
-            test_loss.append(loss(model, device, output, y, total_params, L2, config)[0].item())
+            test_loss.append(loss(model, device, output, y, total_params, L2, config).item())
             y = y.cpu().view(-1)
             prediction = output.round().cpu().view(-1)
             auc_score.append(sklearn.metrics.roc_auc_score(y, prediction))

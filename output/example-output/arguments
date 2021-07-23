@@ -1,0 +1,9 @@
+{
+  "configuration": "example-config",
+  "folder": "example-output",
+  "device": "GPU",
+  "model": "GEN",
+  "rotated": 0,
+  "noise": 0,
+  "train": Infinity
+}
