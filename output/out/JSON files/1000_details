@@ -1,0 +1,10 @@
+Number of images: 2420
+Dice
+Max value: 0.5950130147503511; Max index: 34
+Acc
+Max value: 0.926475330343072; Max index: 22
+Auc
+Max value: 0.8003282616574146; Max index: 6
+Total parameters: 846
+Average test time: 4.784991823999999
+Average train time: 3.3534891320000826
