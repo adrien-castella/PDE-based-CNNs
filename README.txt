@@ -259,7 +259,7 @@ Folder structure:
 
 
 
-Required packages:
+Related packages:
 	All of the following packages may be installed through either pip or conda in command line
 
 	PyTorch - Required. Find instructions on https://pytorch.org/
