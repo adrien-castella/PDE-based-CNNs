@@ -3,9 +3,19 @@ import torch, os, glob, json, random, argparse
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+imported = True
+try:
+    from libtiff import TIFF
+except:
+    imported = False
+    print('libtiff is not installed. Using plt.imread() instead. Errors may occur when importing .tif images.')
+
 def imread(path):
-    file = TIFF.open(path, mode='r')
-    return file.read_image()
+    if imported:
+        file = TIFF.open(path, mode='r')
+        return file.read_image()
+    else:
+        return plt.imread(path)
 
 """
     plots an RGB image given by data

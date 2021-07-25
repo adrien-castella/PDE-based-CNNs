@@ -3,12 +3,21 @@ import torch.nn as nn
 import os, glob
 import random
 import matplotlib.pyplot as plt
-from libtiff import TIFF
 from torchvision.transforms import RandomRotation as Rotate
 
+imported = True
+try:
+    from libtiff import TIFF
+except:
+    imported = False
+    print('libtiff is not installed. Using plt.imread() instead. Errors may occur when importing .tif images.')
+
 def imread(path):
-    file = TIFF.open(path, mode='r')
-    return file.read_image()
+    if imported:
+        file = TIFF.open(path, mode='r')
+        return file.read_image()
+    else:
+        return plt.imread(path)
 
 # Use available devices
 if torch.cuda.is_available():
