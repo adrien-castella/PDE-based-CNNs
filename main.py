@@ -47,7 +47,7 @@ elif not torch.cuda.is_available() and args['device'] == 'GPU':
     print('GPU unavailable, using CPU.')
     print('Either no GPU is available or packages are missing from:')
     print('https://varhowto.com/install-pytorch-cuda-10-2/')
-elif agrs['device'] == 'CPU':
+elif args['device'] == 'CPU':
     device = torch.device('cpu')
     print('Using CPU')
 else:
